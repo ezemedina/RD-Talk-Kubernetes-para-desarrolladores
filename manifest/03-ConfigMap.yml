@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-cm
+  namespace: rd-talk
+data:
+  PORT: "3000"
+  HELLO: "Hello World"
+  archivo.txt: |
+    Hola soy un archivo de texto  

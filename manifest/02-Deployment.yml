@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-demo
+  namespace: rd-talk
+  labels:
+    app: api-demo
+spec:
+  replicas: 3
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: api-demo
+  template:
+    metadata:
+      labels:
+        app: api-demo
+    spec:
+      containers:
+        - name: api-deployment
+          image: ezemedina95/rd-talk:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "100m"
+            limits:
+              memory: "1024Mi"
+              cpu: "250m"
+          livenessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          envFrom:
+            - configMapRef:
+                name: api-cm
+            - secretRef:
+                name: api-secret
+          volumeMounts:
+            - mountPath: /tmp
+              name: api
+      volumes:
+        - name: api
+          configMap:
+            name: api-cm
+            items:
+            - key: archivo.txt
+              path: archivo.txt
